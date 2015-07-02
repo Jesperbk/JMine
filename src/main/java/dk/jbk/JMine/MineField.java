@@ -4,7 +4,7 @@ package dk.jbk.JMine;
 import java.util.Arrays;
 
 public class MineField {
-	private MineState[][] field;
+	private MineFieldCell[][] field;
 	private IntegerGenerator integerGenerator;
 
 	public MineField(int width, int height, int numberOfMines, IntegerGenerator integerGenerator) {
@@ -12,13 +12,21 @@ public class MineField {
 
 		this.integerGenerator = integerGenerator;
 
-		field = new MineState[height][width];
+		field = new MineFieldCell[height][width];
 		clearField();
 		placeMines(numberOfMines);
 	}
 
-	public boolean isMine(int x, int y) {
-		return field[y][x] == MineState.MINE;
+	public void setFlagged(int x, int y) {
+		field[y][x].setSweepState(SweepState.FLAGGED);
+	}
+
+	public SweepState getCellSweepState(int x, int y) {
+		return field[y][x].getSweepState();
+	}
+
+	public boolean isMined(int x, int y) {
+		return field[y][x].isMined();
 	}
 
 	public int getWidth() {
@@ -39,8 +47,10 @@ public class MineField {
 	}
 
 	private void clearField() {
-		for (MineState[] row : this.field) {
-			Arrays.fill(row, MineState.CLEAR);
+		for (MineFieldCell[] row : this.field) {
+			for (int cellIndex = 0; cellIndex < row.length; cellIndex++) {
+				row[cellIndex] = new MineFieldCell();
+			}
 		}
 	}
 
@@ -51,8 +61,8 @@ public class MineField {
 			int y = integerGenerator.getIntegerLessThan(field.length);
 			int x = integerGenerator.getIntegerLessThan(field[y].length);
 
-			if(field[y][x] == MineState.CLEAR) {
-				field[y][x] = MineState.MINE;
+			if(!field[y][x].isMined()) {
+				field[y][x].setMined(true);
 
 				minesRemaining--;
 			}

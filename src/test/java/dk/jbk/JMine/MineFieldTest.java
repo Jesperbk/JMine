@@ -11,7 +11,7 @@ public class MineFieldTest {
 		int numberOfMines = 1;
 		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines, new MockIntegerGenerator());
 
-		assertTrue(mineField.isMine(0,0));
+		assertTrue(mineField.isMined(0, 0));
 	}
 
 	@Test
@@ -20,7 +20,7 @@ public class MineFieldTest {
 		int numberOfMines = 0;
 		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines, new MockIntegerGenerator());
 
-		assertFalse(mineField.isMine(0, 0));
+		assertFalse(mineField.isMined(0, 0));
 	}
 
 	@Test
@@ -56,15 +56,15 @@ public class MineFieldTest {
 						2,0,
 						0,2));
 
-		assertTrue(mineField.isMine(1,2));
-		assertTrue(mineField.isMine(0,2));
-		assertTrue(mineField.isMine(2,0));
-		assertFalse(mineField.isMine(0,0));
-		assertFalse(mineField.isMine(0,1));
-		assertFalse(mineField.isMine(1,0));
-		assertFalse(mineField.isMine(1,1));
-		assertFalse(mineField.isMine(2, 1));
-		assertFalse(mineField.isMine(2, 2));
+		assertTrue(mineField.isMined(1, 2));
+		assertTrue(mineField.isMined(0, 2));
+		assertTrue(mineField.isMined(2, 0));
+		assertFalse(mineField.isMined(0, 0));
+		assertFalse(mineField.isMined(0, 1));
+		assertFalse(mineField.isMined(1, 0));
+		assertFalse(mineField.isMined(1, 1));
+		assertFalse(mineField.isMined(2, 1));
+		assertFalse(mineField.isMined(2, 2));
 	}
 
 	@Test
@@ -77,8 +77,8 @@ public class MineFieldTest {
 						2,1,
 						1,0));
 
-		assertTrue(mineField.isMine(1,2));
-		assertTrue(mineField.isMine(0,1));
+		assertTrue(mineField.isMined(1, 2));
+		assertTrue(mineField.isMined(0, 1));
 	}
 
 	@Test
@@ -90,12 +90,22 @@ public class MineFieldTest {
 		assertEquals(numberOfMines, countMinesInField(mineField));
 	}
 
+	@Test
+	public void testSetCellFlag() throws Exception {
+		int fieldWidth = 2, fieldHeight = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, 0, new LibraryIntegerGenerator());
+
+		mineField.setFlagged(0, 1);
+
+		assertEquals(SweepState.FLAGGED, mineField.getCellSweepState(0, 1));
+	}
+
 	private int countMinesInField(MineField mineField) {
 		int numberOfMines = 0;
 
 		for (int x = 0; x < mineField.getWidth(); x++) {
 			for (int y = 0; y < mineField.getHeight(); y++) {
-				if (mineField.isMine(x,y)) {
+				if (mineField.isMined(x, y)) {
 					numberOfMines++;
 				}
 			}
