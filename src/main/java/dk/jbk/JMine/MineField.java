@@ -2,10 +2,14 @@ package dk.jbk.JMine;
 
 
 public class MineField {
-	boolean[][] field;
+	private boolean[][] field;
+	private IntegerGenerator integerGenerator;
 
-	public MineField(int width, int height, int numberOfMines) {
+	public MineField(int width, int height, int numberOfMines, IntegerGenerator integerGenerator) {
+		validateFieldParameters(width, height, numberOfMines);
+
 		field = new boolean[height][width];
+		this.integerGenerator = integerGenerator;
 
 		placeMines(numberOfMines);
 	}
@@ -22,14 +26,25 @@ public class MineField {
 		return field.length;
 	}
 
+	private void validateFieldParameters(int width, int height, int numberOfMines) {
+		if (width <= 0 || height <= 0) {
+			throw new IllegalArgumentException("Dimension cannot be less than 1.");
+		}
+		if (numberOfMines > width * height) {
+			throw new IllegalArgumentException("Number of mines must be smaller than size of field.");
+		}
+	}
+
 	private void placeMines(int numberOfMines) {
 		int minesRemaining = numberOfMines;
 
-		for(int y = 0; y < field.length; y++) {
+		while (minesRemaining > 0) {
+			int y = integerGenerator.getIntegerLessThan(field.length);
+			int x = integerGenerator.getIntegerLessThan(field[y].length);
 
-			for (int x = 0; x < field[y].length && minesRemaining > 0; x++) {
-
+			if(field[y][x] == false) {
 				field[y][x] = true;
+
 				minesRemaining--;
 			}
 		}
