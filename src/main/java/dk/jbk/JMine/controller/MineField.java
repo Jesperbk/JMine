@@ -84,6 +84,21 @@ public class MineField {
 		return gameState;
 	}
 
+	public int getTheoreticalMinesRemaining() {
+		int flagCount = 0;
+
+		for (MineFieldCell[] row : field) {
+
+			for (MineFieldCell cell : row) {
+				if (cell.getSweepState() == SweepState.FLAGGED) {
+					flagCount++;
+				}
+			}
+		}
+
+		return mineCount - flagCount;
+	}
+
 	private void validateFieldParameters(int width, int height, int numberOfMines) {
 		if (width <= 0 || height <= 0) {
 			throw new IllegalArgumentException("Dimension cannot be less than 1.");

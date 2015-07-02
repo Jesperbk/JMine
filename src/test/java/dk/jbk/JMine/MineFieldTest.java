@@ -180,6 +180,23 @@ public class MineFieldTest {
 		assertEquals(1, mineField.getNumberOfNeighbouringMines(0, 1));
 	}
 
+	@Test
+	public void testGetTheoreticalMinesRemaining() throws Exception {
+		int fieldWidth = 3, fieldHeight = 3;
+		int mineCount = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(
+						2,1,
+						2,0));
+
+		mineField.togglePressDown(0,0);
+		mineField.expose(0,0);
+
+		mineField.toggleFlagged(2,2);
+
+		assertEquals(1, mineField.getTheoreticalMinesRemaining());
+	}
+
 	private int countMinesInField(MineField mineField) {
 		int numberOfMines = 0;
 
