@@ -3,17 +3,21 @@ package dk.jbk.JMine;
 
 public class MineField {
 	private MineFieldCell[][] field;
+	private int mineCount;
 	private IntegerGenerator integerGenerator;
 	private GameState gameState;
 
 	public MineField(int width, int height, int mineCount, IntegerGenerator integerGenerator) {
 		validateFieldParameters(width, height, mineCount);
 
+		this.mineCount = mineCount;
+
 		this.integerGenerator = integerGenerator;
 
 		field = new MineFieldCell[height][width];
 		clearField();
-		placeMines(mineCount);
+
+		gameState = GameState.NEW;
 	}
 
 	public void toggleFlagged(int x, int y) {
@@ -25,6 +29,11 @@ public class MineField {
 	}
 
 	public void expose(int x, int y) {
+		if(gameState == GameState.NEW) {
+			gameState = GameState.RUNNING;
+			placeMinesWhileExemptingStartingArea(mineCount, x, y);
+		}
+
 		field[y][x].expose();
 
 		if (field[y][x].getSweepState() == SweepState.EXPLODED) {
@@ -89,14 +98,14 @@ public class MineField {
 		}
 	}
 
-	private void placeMines(int numberOfMines) {
+	private void placeMinesWhileExemptingStartingArea(int numberOfMines, int startX, int startY) {
 		int minesRemaining = numberOfMines;
 
 		while (minesRemaining > 0) {
 			int y = integerGenerator.getIntegerLessThan(field.length);
 			int x = integerGenerator.getIntegerLessThan(field[y].length);
 
-			if(!field[y][x].isMined()) {
+			if(!field[y][x].isMined() && !areNeighbours(x, y, startX, startY)) {
 				field[y][x].setMined(true);
 
 				minesRemaining--;
@@ -117,5 +126,9 @@ public class MineField {
 			}
 		}
 		return countResult;
+	}
+
+	private boolean areNeighbours(int x1, int y1, int x2, int y2) {
+		return Math.abs(x1-x2) <= 1 && Math.abs(y1-y2) <= 1;
 	}
 }

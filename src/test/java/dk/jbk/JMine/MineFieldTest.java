@@ -6,24 +6,6 @@ import static org.junit.Assert.*;
 public class MineFieldTest {
 
 	@Test
-	public void testCreateOneByOneWithOneMine() throws Exception {
-		int fieldWidth = 1, fieldHeight = 1;
-		int mineCount = 1;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount, new MockIntegerGenerator());
-
-		assertTrue(mineField.isMined(0, 0));
-	}
-
-	@Test
-	public void testCreateOneByOneWithNoMine() throws Exception {
-		int fieldWidth = 1, fieldHeight = 1;
-		int mineCount = 0;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount, new MockIntegerGenerator());
-
-		assertFalse(mineField.isMined(0, 0));
-	}
-
-	@Test
 	public void testHasCorrectDimensions() throws Exception {
 		int fieldWidth = 3, fieldHeight = 3;
 		int mineCount = 0;
@@ -56,6 +38,9 @@ public class MineFieldTest {
 						2,0,
 						0,2));
 
+		mineField.togglePressDown(0, 0);
+		mineField.expose(0, 0);
+
 		assertTrue(mineField.isMined(1, 2));
 		assertTrue(mineField.isMined(0, 2));
 		assertTrue(mineField.isMined(2, 0));
@@ -69,16 +54,33 @@ public class MineFieldTest {
 
 	@Test
 	public void testSkipAlreadyCreatedMines() throws Exception {
-		int fieldWidth = 2, fieldHeight = 3;
+		int fieldWidth = 3, fieldHeight = 3;
 		int mineCount = 2;
 		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
 				new MockIntegerGenerator(
 						2,1,
 						2,1,
-						1,0));
+						2,2));
+
+		mineField.togglePressDown(0, 0);
+		mineField.expose(0, 0);
 
 		assertTrue(mineField.isMined(1, 2));
-		assertTrue(mineField.isMined(0, 1));
+		assertTrue(mineField.isMined(2, 2));
+	}
+
+	@Test
+	public void testNoMineNearStartingCell() throws Exception {
+		int fieldWidth = 4, fieldHeight = 4;
+		int mineCount = 1;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(0,0,3,3));
+
+		mineField.togglePressDown(0,1);
+		mineField.expose(0,1);
+
+		assertFalse(mineField.isMined(0, 0));
+		assertTrue(mineField.isMined(3, 3));
 	}
 
 	@Test
@@ -86,6 +88,9 @@ public class MineFieldTest {
 		int fieldWidth = 3, fieldHeight = 3;
 		int mineCount = 3;
 		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount, new LibraryIntegerGenerator());
+
+		mineField.togglePressDown(0, 0);
+		mineField.expose(0, 0);
 
 		assertEquals(mineCount, countMinesInField(mineField));
 	}
@@ -123,18 +128,21 @@ public class MineFieldTest {
 
 	@Test
 	public void testGameOver() throws Exception {
-		int fieldWidth = 2, fieldHeight = 2;
+		int fieldWidth = 3, fieldHeight = 3;
 		int mineCount = 2;
 		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
 				new MockIntegerGenerator(
-						0,0,
-						1,0));
+						2,2,
+						1,2));
 
-		mineField.togglePressDown(0, 1);
-		mineField.expose(0, 1);
+		mineField.togglePressDown(0, 0);
+		mineField.expose(0, 0);
 
-		assertEquals(SweepState.EXPLODED, mineField.getCellSweepState(0, 1));
-		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 0));
+		mineField.togglePressDown(2,2);
+		mineField.expose(2,2);
+
+		assertEquals(SweepState.EXPLODED, mineField.getCellSweepState(2, 2));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(2, 1));
 		assertEquals(GameState.DEAD, mineField.getGameState());
 	}
 
@@ -148,6 +156,9 @@ public class MineFieldTest {
 						2,0,
 						0,2));
 
+		mineField.togglePressDown(0,0);
+		mineField.expose(0,0);
+
 		assertEquals(3, mineField.getNumberOfNeighbouringMines(1, 1));
 	}
 
@@ -158,6 +169,9 @@ public class MineFieldTest {
 		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
 				new MockIntegerGenerator(
 						0,0));
+
+		mineField.togglePressDown(2,2);
+		mineField.expose(2,2);
 
 		assertEquals(1, mineField.getNumberOfNeighbouringMines(0, 1));
 	}
