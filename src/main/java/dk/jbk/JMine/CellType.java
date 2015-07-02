@@ -1,6 +1,6 @@
 package dk.jbk.JMine;
 
-public enum MineState {
+public enum CellType {
 	MINE,
 	CLEAR
 }

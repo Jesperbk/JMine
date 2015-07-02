@@ -2,6 +2,8 @@ package dk.jbk.JMine;
 
 public enum SweepState {
 	BLANK,
+	PRESSED,
 	FLAGGED,
-	EXPOSED
+	EXPOSED,
+	EXPLODED
 }

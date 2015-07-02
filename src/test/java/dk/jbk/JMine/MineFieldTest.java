@@ -8,8 +8,8 @@ public class MineFieldTest {
 	@Test
 	public void testCreateOneByOneWithOneMine() throws Exception {
 		int fieldWidth = 1, fieldHeight = 1;
-		int numberOfMines = 1;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines, new MockIntegerGenerator());
+		int mineCount = 1;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount, new MockIntegerGenerator());
 
 		assertTrue(mineField.isMined(0, 0));
 	}
@@ -17,8 +17,8 @@ public class MineFieldTest {
 	@Test
 	public void testCreateOneByOneWithNoMine() throws Exception {
 		int fieldWidth = 1, fieldHeight = 1;
-		int numberOfMines = 0;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines, new MockIntegerGenerator());
+		int mineCount = 0;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount, new MockIntegerGenerator());
 
 		assertFalse(mineField.isMined(0, 0));
 	}
@@ -26,8 +26,8 @@ public class MineFieldTest {
 	@Test
 	public void testHasCorrectDimensions() throws Exception {
 		int fieldWidth = 3, fieldHeight = 3;
-		int numberOfMines = 0;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines, new MockIntegerGenerator());
+		int mineCount = 0;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount, new MockIntegerGenerator());
 
 		assertEquals(fieldWidth, mineField.getWidth());
 		assertEquals(fieldHeight, mineField.getHeight());
@@ -36,21 +36,21 @@ public class MineFieldTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidDimension() throws Exception {
 		int fieldWidth = 0, fieldHeight = 3;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, 0, null);
+		new MineField(fieldWidth, fieldHeight, 0, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidNumberOfMines() throws Exception {
 		int fieldWidth = 2, fieldHeight = 3;
-		int numberOfMines = 7;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines, null);
+		int mineCount = 7;
+		new MineField(fieldWidth, fieldHeight, mineCount, null);
 	}
 
 	@Test
 	public void testMinePlacement() throws Exception {
 		int fieldWidth = 3, fieldHeight = 3;
-		int numberOfMines = 3;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines,
+		int mineCount = 3;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
 				new MockIntegerGenerator(
 						2,1,
 						2,0,
@@ -70,8 +70,8 @@ public class MineFieldTest {
 	@Test
 	public void testSkipAlreadyCreatedMines() throws Exception {
 		int fieldWidth = 2, fieldHeight = 3;
-		int numberOfMines = 2;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines,
+		int mineCount = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
 				new MockIntegerGenerator(
 						2,1,
 						2,1,
@@ -84,20 +84,44 @@ public class MineFieldTest {
 	@Test
 	public void testRandomPlacementOfMines() throws Exception {
 		int fieldWidth = 3, fieldHeight = 3;
-		int numberOfMines = 3;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, numberOfMines, new LibraryIntegerGenerator());
+		int mineCount = 3;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount, new LibraryIntegerGenerator());
 
-		assertEquals(numberOfMines, countMinesInField(mineField));
+		assertEquals(mineCount, countMinesInField(mineField));
 	}
 
 	@Test
-	public void testSetCellFlag() throws Exception {
+	public void testEnableCellFlag() throws Exception {
 		int fieldWidth = 2, fieldHeight = 2;
 		MineField mineField = new MineField(fieldWidth, fieldHeight, 0, new LibraryIntegerGenerator());
 
-		mineField.setFlagged(0, 1);
+		mineField.toggleFlag(0, 1);
 
 		assertEquals(SweepState.FLAGGED, mineField.getCellSweepState(0, 1));
+	}
+
+	@Test
+	public void testGetNeighbourCount() throws Exception {
+		int fieldWidth = 3, fieldHeight = 3;
+		int mineCount = 3;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(
+						2,1,
+						2,0,
+						0,2));
+
+		assertEquals(3, mineField.getNumberOfNeighbouringMines(1, 1));
+	}
+
+	@Test
+	public void testGetNeighbourCountForBorderCell() throws Exception {
+		int fieldWidth = 3, fieldHeight = 3;
+		int mineCount = 1;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(
+						0,0));
+
+		assertEquals(1, mineField.getNumberOfNeighbouringMines(0, 1));
 	}
 
 	private int countMinesInField(MineField mineField) {

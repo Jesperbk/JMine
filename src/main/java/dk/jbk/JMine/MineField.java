@@ -1,24 +1,22 @@
 package dk.jbk.JMine;
 
 
-import java.util.Arrays;
-
 public class MineField {
 	private MineFieldCell[][] field;
 	private IntegerGenerator integerGenerator;
 
-	public MineField(int width, int height, int numberOfMines, IntegerGenerator integerGenerator) {
-		validateFieldParameters(width, height, numberOfMines);
+	public MineField(int width, int height, int mineCount, IntegerGenerator integerGenerator) {
+		validateFieldParameters(width, height, mineCount);
 
 		this.integerGenerator = integerGenerator;
 
 		field = new MineFieldCell[height][width];
 		clearField();
-		placeMines(numberOfMines);
+		placeMines(mineCount);
 	}
 
-	public void setFlagged(int x, int y) {
-		field[y][x].setSweepState(SweepState.FLAGGED);
+	public void toggleFlag(int x, int y) {
+		field[y][x].toggleFlagged();
 	}
 
 	public SweepState getCellSweepState(int x, int y) {
@@ -35,6 +33,17 @@ public class MineField {
 
 	public int getHeight() {
 		return field.length;
+	}
+
+	public int getNumberOfNeighbouringMines(int x, int y) {
+		int neighbouringMinesCount = field[y][x].getNeighbouringMinesCount();
+
+		if (neighbouringMinesCount == -1) { //Number is still unknown
+
+			field[y][x].setNeighbouringMinesCount(countNeighbouringMines(x, y));
+		}
+
+		return field[y][x].getNeighbouringMinesCount();
 	}
 
 	private void validateFieldParameters(int width, int height, int numberOfMines) {
@@ -67,5 +76,20 @@ public class MineField {
 				minesRemaining--;
 			}
 		}
+	}
+
+	private int countNeighbouringMines(int x, int y) {
+		int countResult = 0;
+
+		for (int neighbourY = Math.max(y - 1, 0); neighbourY <= Math.min(y + 1, field.length); neighbourY++) {
+
+			for (int neighbourX = Math.max(x - 1, 0); neighbourX <= Math.min(x + 1, field[neighbourY].length); neighbourX++) {
+
+				if (isMined(neighbourX,neighbourY)) {
+					countResult++;
+				}
+			}
+		}
+		return countResult;
 	}
 }
