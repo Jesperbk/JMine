@@ -20,26 +20,30 @@ public class MineFieldCell {
 	}
 
 	public void toggleFlagged() {
-		if (sweepState == SweepState.FLAGGED) {
+		if (getSweepState() == SweepState.FLAGGED) {
 			sweepState = SweepState.BLANK;
 		}
-		else if (sweepState == SweepState.BLANK) {
+		else if (getSweepState() == SweepState.BLANK) {
 			sweepState = SweepState.FLAGGED;
 		}
-		//Do nothing if already exposed
 	}
 
 	public void expose() {
-		if (sweepState == SweepState.PRESSED) {
-			sweepState = SweepState.EXPOSED;
+		if (getSweepState() == SweepState.PRESSED) {
+			if (isMined()) {
+				sweepState = SweepState.EXPLODED;
+			}
+			else {
+				sweepState = SweepState.EXPOSED;
+			}
 		}
 	}
 
 	public void togglePressDown() {
-		if (sweepState == SweepState.BLANK) {
+		if (getSweepState() == SweepState.BLANK) {
 			sweepState = SweepState.PRESSED;
 		}
-		else if (sweepState == SweepState.PRESSED) {
+		else if (getSweepState() == SweepState.PRESSED) {
 			sweepState = SweepState.BLANK;
 		}
 	}
@@ -54,5 +58,14 @@ public class MineFieldCell {
 
 	public void setNeighbouringMinesCount(int numberOfNeighbouringMines) {
 		this.neighbouringMinesCount = numberOfNeighbouringMines;
+	}
+
+	public void revealTrueState() {
+		if (isMined() && getSweepState() == SweepState.BLANK) {
+			sweepState = SweepState.EXPOSED;
+		}
+		else if (getSweepState() == SweepState.FLAGGED && !isMined()) {
+			sweepState = SweepState.CLEAR_FLAGGED;
+		}
 	}
 }

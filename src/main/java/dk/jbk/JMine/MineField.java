@@ -4,6 +4,7 @@ package dk.jbk.JMine;
 public class MineField {
 	private MineFieldCell[][] field;
 	private IntegerGenerator integerGenerator;
+	private GameState gameState;
 
 	public MineField(int width, int height, int mineCount, IntegerGenerator integerGenerator) {
 		validateFieldParameters(width, height, mineCount);
@@ -15,8 +16,29 @@ public class MineField {
 		placeMines(mineCount);
 	}
 
-	public void toggleFlag(int x, int y) {
+	public void toggleFlagged(int x, int y) {
 		field[y][x].toggleFlagged();
+	}
+
+	public void togglePressDown(int x, int y) {
+		field[y][x].togglePressDown();
+	}
+
+	public void expose(int x, int y) {
+		field[y][x].expose();
+
+		if (field[y][x].getSweepState() == SweepState.EXPLODED) {
+			gameState = GameState.DEAD;
+			revealFinalResult();
+		}
+	}
+
+	private void revealFinalResult() {
+		for (MineFieldCell[] row : field) {
+			for (MineFieldCell cell : row) {
+				cell.revealTrueState();
+			}
+		}
 	}
 
 	public SweepState getCellSweepState(int x, int y) {
@@ -44,6 +66,10 @@ public class MineField {
 		}
 
 		return field[y][x].getNeighbouringMinesCount();
+	}
+
+	public GameState getGameState() {
+		return gameState;
 	}
 
 	private void validateFieldParameters(int width, int height, int numberOfMines) {

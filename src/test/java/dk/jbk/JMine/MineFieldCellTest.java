@@ -70,4 +70,32 @@ public class MineFieldCellTest {
 
 		assertEquals(SweepState.EXPOSED, mineFieldCell.getSweepState());
 	}
+
+	@Test
+	public void testRevealTrueStateUndetectedMine () throws Exception {
+		mineFieldCell.setMined(true);
+
+		mineFieldCell.revealTrueState();
+
+		assertEquals(SweepState.EXPOSED, mineFieldCell.getSweepState());
+	}
+
+	@Test
+	public void testRevealTrueStateMineFlagged () throws Exception {
+		mineFieldCell.setMined(true);
+		mineFieldCell.toggleFlagged();
+
+		mineFieldCell.revealTrueState();
+
+		assertEquals(SweepState.FLAGGED, mineFieldCell.getSweepState());
+	}
+
+	@Test
+	public void testRevealTrueStateClearFlagged() throws Exception {
+		mineFieldCell.toggleFlagged();
+
+		mineFieldCell.revealTrueState();
+
+		assertEquals(SweepState.CLEAR_FLAGGED, mineFieldCell.getSweepState());
+	}
 }

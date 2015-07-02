@@ -5,5 +5,6 @@ public enum SweepState {
 	PRESSED,
 	FLAGGED,
 	EXPOSED,
-	EXPLODED
+	EXPLODED,
+	CLEAR_FLAGGED
 }

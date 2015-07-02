@@ -91,13 +91,51 @@ public class MineFieldTest {
 	}
 
 	@Test
-	public void testEnableCellFlag() throws Exception {
+	public void testFlagCell() throws Exception {
 		int fieldWidth = 2, fieldHeight = 2;
-		MineField mineField = new MineField(fieldWidth, fieldHeight, 0, new LibraryIntegerGenerator());
+		MineField mineField = new MineField(fieldWidth, fieldHeight, 0, new MockIntegerGenerator());
 
-		mineField.toggleFlag(0, 1);
+		mineField.toggleFlagged(0, 1);
 
 		assertEquals(SweepState.FLAGGED, mineField.getCellSweepState(0, 1));
+	}
+
+	@Test
+	public void testPressCell() throws Exception {
+		int fieldWidth = 2, fieldHeight = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, 0, new MockIntegerGenerator());
+
+		mineField.togglePressDown(0, 1);
+
+		assertEquals(SweepState.PRESSED, mineField.getCellSweepState(0, 1));
+	}
+
+	@Test
+	public void testExposeCell() throws Exception {
+		int fieldWidth = 2, fieldHeight = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, 0, new MockIntegerGenerator());
+
+		mineField.togglePressDown(0, 1);
+		mineField.expose(0, 1);
+
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 1));
+	}
+
+	@Test
+	public void testGameOver() throws Exception {
+		int fieldWidth = 2, fieldHeight = 2;
+		int mineCount = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(
+						0,0,
+						1,0));
+
+		mineField.togglePressDown(0, 1);
+		mineField.expose(0, 1);
+
+		assertEquals(SweepState.EXPLODED, mineField.getCellSweepState(0, 1));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 0));
+		assertEquals(GameState.DEAD, mineField.getGameState());
 	}
 
 	@Test
