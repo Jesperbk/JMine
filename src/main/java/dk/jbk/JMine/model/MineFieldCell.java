@@ -1,4 +1,4 @@
-package dk.jbk.JMine;
+package dk.jbk.JMine.model;
 
 public class MineFieldCell {
 	private boolean isMined;

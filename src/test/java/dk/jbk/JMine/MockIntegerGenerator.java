@@ -1,5 +1,7 @@
 package dk.jbk.JMine;
 
+import dk.jbk.JMine.controller.IntegerGenerator;
+
 public class MockIntegerGenerator implements IntegerGenerator {
 	int[] numbersToReturn;
 	int indexOfNextNumber;

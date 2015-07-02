@@ -1,4 +1,4 @@
-package dk.jbk.JMine;
+package dk.jbk.JMine.controller;
 
 
 import java.util.Random;

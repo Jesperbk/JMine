@@ -1,4 +1,4 @@
-package dk.jbk.JMine;
+package dk.jbk.JMine.controller;
 
 
 public interface IntegerGenerator {

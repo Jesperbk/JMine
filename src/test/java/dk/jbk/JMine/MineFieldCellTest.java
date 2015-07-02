@@ -1,6 +1,8 @@
 package dk.jbk.JMine;
 
 
+import dk.jbk.JMine.model.MineFieldCell;
+import dk.jbk.JMine.model.SweepState;
 import org.junit.*;
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package dk.jbk.JMine;
+package dk.jbk.JMine.model;
 
 public enum SweepState {
 	BLANK,

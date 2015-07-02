@@ -1,5 +1,9 @@
 package dk.jbk.JMine;
 
+import dk.jbk.JMine.controller.GameState;
+import dk.jbk.JMine.controller.LibraryIntegerGenerator;
+import dk.jbk.JMine.controller.MineField;
+import dk.jbk.JMine.model.SweepState;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -77,7 +81,7 @@ public class MineFieldTest {
 				new MockIntegerGenerator(0,0,3,3));
 
 		mineField.togglePressDown(0,1);
-		mineField.expose(0,1);
+		mineField.expose(0, 1);
 
 		assertFalse(mineField.isMined(0, 0));
 		assertTrue(mineField.isMined(3, 3));
@@ -138,7 +142,7 @@ public class MineFieldTest {
 		mineField.togglePressDown(0, 0);
 		mineField.expose(0, 0);
 
-		mineField.togglePressDown(2,2);
+		mineField.togglePressDown(2, 2);
 		mineField.expose(2,2);
 
 		assertEquals(SweepState.EXPLODED, mineField.getCellSweepState(2, 2));

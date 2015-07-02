@@ -1,5 +1,8 @@
-package dk.jbk.JMine;
+package dk.jbk.JMine.controller;
 
+
+import dk.jbk.JMine.model.MineFieldCell;
+import dk.jbk.JMine.model.SweepState;
 
 public class MineField {
 	private MineFieldCell[][] field;
