@@ -1,5 +1,6 @@
 package dk.jbk.JMine;
 
+import dk.jbk.JMine.controller.ImageManager;
 import dk.jbk.JMine.controller.LibraryIntegerGenerator;
 import dk.jbk.JMine.controller.MineField;
 import dk.jbk.JMine.view.MineFieldCanvas;
@@ -9,11 +10,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class JMineApplication extends Application {
-	MineField mineField;
+	private MineField mineField;
+	private ImageManager imageManager;
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		mineField = new MineField(30, 16, 99, new LibraryIntegerGenerator());
+		imageManager = new ImageManager();
 
 		stage.setTitle("JMine");
 
@@ -22,7 +25,7 @@ public class JMineApplication extends Application {
 		stage.setScene(scene);
 		scene.setFill(Color.LIGHTGRAY);
 
-		MineFieldCanvas canvas = new MineFieldCanvas(mineField);
+		MineFieldCanvas canvas = new MineFieldCanvas(mineField, imageManager);
 		root.getChildren().add(canvas);
 
 		stage.sizeToScene();
