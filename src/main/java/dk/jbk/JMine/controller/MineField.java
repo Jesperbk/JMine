@@ -39,6 +39,8 @@ public class MineField {
 
 		field[y][x].expose();
 
+		exposeNeighboursIfBlank(x, y);
+
 		if (field[y][x].getSweepState() == SweepState.EXPLODED) {
 			gameState = GameState.DEAD;
 			revealFinalResult();
@@ -49,6 +51,24 @@ public class MineField {
 		for (MineFieldCell[] row : field) {
 			for (MineFieldCell cell : row) {
 				cell.revealTrueState();
+			}
+		}
+	}
+
+	private void exposeNeighboursIfBlank(int x, int y) {
+		MineFieldCell currentCell = field[y][x];
+
+		if (!currentCell.isMined() && getNeighbouringMinesCount(x, y) == 0) {
+
+			for (int neighbourY = Math.max(y - 1, 0); neighbourY < Math.min(y + 2, field.length); neighbourY++) {
+
+				for (int neighbourX = Math.max(x - 1, 0); neighbourX < Math.min(x + 2, field[neighbourY].length); neighbourX++) {
+
+					if (field[neighbourY][neighbourX].getSweepState() == SweepState.BLANK) {
+						togglePressDown(neighbourX, neighbourY);
+						expose(neighbourX, neighbourY);
+					}
+				}
 			}
 		}
 	}
@@ -69,7 +89,7 @@ public class MineField {
 		return field.length;
 	}
 
-	public int getNumberOfNeighbouringMines(int x, int y) {
+	public int getNeighbouringMinesCount(int x, int y) {
 		int neighbouringMinesCount = field[y][x].getNeighbouringMinesCount();
 
 		if (neighbouringMinesCount == -1) { //Number is still unknown
@@ -134,9 +154,9 @@ public class MineField {
 	private int countNeighbouringMines(int x, int y) {
 		int countResult = 0;
 
-		for (int neighbourY = Math.max(y - 1, 0); neighbourY <= Math.min(y + 1, field.length); neighbourY++) {
+		for (int neighbourY = Math.max(y - 1, 0); neighbourY < Math.min(y + 2, field.length); neighbourY++) {
 
-			for (int neighbourX = Math.max(x - 1, 0); neighbourX <= Math.min(x + 1, field[neighbourY].length); neighbourX++) {
+			for (int neighbourX = Math.max(x - 1, 0); neighbourX < Math.min(x + 2, field[neighbourY].length); neighbourX++) {
 
 				if (isMined(neighbourX,neighbourY)) {
 					countResult++;

@@ -163,7 +163,7 @@ public class MineFieldTest {
 		mineField.togglePressDown(0,0);
 		mineField.expose(0,0);
 
-		assertEquals(3, mineField.getNumberOfNeighbouringMines(1, 1));
+		assertEquals(3, mineField.getNeighbouringMinesCount(1, 1));
 	}
 
 	@Test
@@ -177,7 +177,7 @@ public class MineFieldTest {
 		mineField.togglePressDown(2,2);
 		mineField.expose(2,2);
 
-		assertEquals(1, mineField.getNumberOfNeighbouringMines(0, 1));
+		assertEquals(1, mineField.getNeighbouringMinesCount(0, 1));
 	}
 
 	@Test
@@ -195,6 +195,24 @@ public class MineFieldTest {
 		mineField.toggleFlagged(2,2);
 
 		assertEquals(1, mineField.getTheoreticalMinesRemaining());
+	}
+
+	@Test
+	public void testExposeNeighboursIfBlank() throws Exception {
+		int fieldWidth = 3, fieldHeight = 3;
+		int mineCount = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(
+						2,1,
+						1,2));
+
+		mineField.togglePressDown(0, 0);
+		mineField.expose(0, 0);
+
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 0));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 1));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(1, 0));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(1, 1));
 	}
 
 	private int countMinesInField(MineField mineField) {
