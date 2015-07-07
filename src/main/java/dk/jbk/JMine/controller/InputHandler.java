@@ -3,17 +3,24 @@ package dk.jbk.JMine.controller;
 import dk.jbk.JMine.model.SweepState;
 import dk.jbk.JMine.view.MineFieldPane;
 import dk.jbk.JMine.view.TileCanvas;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class InputHandler implements EventHandler<MouseEvent> {
@@ -26,11 +33,13 @@ public class InputHandler implements EventHandler<MouseEvent> {
 		this.mineField = mineField;
 		this.mineFieldPane = mineFieldPane;
 
-		// debugCanvas = setupDebugStage();
+		debugCanvas = setupDebugStage();
 	}
 
 	@Override
 	public void handle(MouseEvent event) {
+		GameState preEventGameState = mineField.getGameState();
+
 		TileCanvas origin = (TileCanvas)event.getSource();
 		int cellX = origin.getCellX();
 		int cellY = origin.getCellY();
@@ -77,6 +86,8 @@ public class InputHandler implements EventHandler<MouseEvent> {
 		else {
 			debugCanvas.redraw(origin.getCellX(), origin.getCellY());
 		}
+
+		showResultPopupIfNecessary(preEventGameState, mineField.getGameState());
 	}
 
 	private DebugCanvas setupDebugStage() {
@@ -94,9 +105,29 @@ public class InputHandler implements EventHandler<MouseEvent> {
 		debugStage.setX(200);
 		debugStage.setY(670);
 		debugStage.sizeToScene();
-		debugStage.show();
+		//debugStage.show();
 
 		return debugCanvas;
+	}
+
+	private void showResultPopupIfNecessary(GameState preEventGameState, GameState postEventGameState) {
+		if (preEventGameState == GameState.RUNNING &&
+				(postEventGameState == GameState.WON ||
+				postEventGameState == GameState.DEAD)) {
+			String message = (postEventGameState == GameState.WON) ? "You won!" : "You died!";
+
+			Stage dialogStage = new Stage();
+			Button okButton = new Button("OK");
+			okButton.setDefaultButton(true);
+			okButton.setOnAction(event -> dialogStage.close());
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.setScene(new Scene(VBoxBuilder.create().
+					children(new Text(message), okButton).
+					alignment(Pos.CENTER).padding(new Insets(20)).
+					spacing(20).build()));
+			dialogStage.show();
+		}
+
 	}
 
 	class DebugCanvas extends Canvas {

@@ -3,6 +3,15 @@ package dk.jbk.JMine.controller;
 
 import dk.jbk.JMine.model.MineFieldCell;
 import dk.jbk.JMine.model.SweepState;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class MineField {
 	private MineFieldCell[][] field;
@@ -25,6 +34,8 @@ public class MineField {
 
 	public void toggleFlagged(int x, int y) {
 		field[y][x].toggleFlagged();
+
+		determineGameState();
 	}
 
 	public void togglePressDown(int x, int y) {
@@ -41,13 +52,42 @@ public class MineField {
 
 		exposeNeighboursIfBlank(x, y);
 
-		if (field[y][x].getSweepState() == SweepState.EXPLODED) {
-			gameState = GameState.DEAD;
-			revealFinalResult();
+		determineGameState();
+	}
+
+	private void determineGameState() {
+		int flaggedMines = 0;
+
+		for (int y = 0; y < field.length; y++) {
+			for (int x = 0; x < field[y].length; x++) {
+				if (field[y][x].getSweepState() == SweepState.EXPLODED) {
+					gameState = GameState.DEAD;
+					revealGameOver();
+					break;
+				}
+				else if (field[y][x].getSweepState() == SweepState.FLAGGED
+						&& field[y][x].isMined()) {
+					flaggedMines++;
+				}
+			}
+		}
+
+		if (flaggedMines == mineCount) {
+			gameState = GameState.WON;
+			revealGameWon();
 		}
 	}
 
-	private void revealFinalResult() {
+	private void revealGameWon() {
+		for (MineFieldCell[] row : field) {
+			for (MineFieldCell cell : row) {
+				cell.togglePressDown();
+				cell.expose();
+			}
+		}
+	}
+
+	private void revealGameOver() {
 		for (MineFieldCell[] row : field) {
 			for (MineFieldCell cell : row) {
 				cell.revealTrueState();
@@ -98,6 +138,31 @@ public class MineField {
 		}
 
 		return field[y][x].getNeighbouringMinesCount();
+	}
+
+	public void togglePressDownNeighbours(int x, int y) {
+		int neighbourMinesCount = getNeighbouringMinesCount(x, y);
+		int neighboursFlaggedCount = countNeighbouringFlags(x, y);
+
+		if (neighbourMinesCount == neighboursFlaggedCount) {
+			for (int neighbourY = Math.max(y - 1, 0); neighbourY < Math.min(y + 2, field.length); neighbourY++) {
+
+				for (int neighbourX = Math.max(x - 1, 0); neighbourX < Math.min(x + 2, field[neighbourY].length); neighbourX++) {
+
+					togglePressDown(neighbourX, neighbourY);
+				}
+			}
+		}
+	}
+
+	public void exposeNeighbours(int x, int y) {
+		for (int neighbourY = Math.max(y - 1, 0); neighbourY < Math.min(y + 2, field.length); neighbourY++) {
+
+			for (int neighbourX = Math.max(x - 1, 0); neighbourX < Math.min(x + 2, field[neighbourY].length); neighbourX++) {
+
+				expose(neighbourX, neighbourY);
+			}
+		}
 	}
 
 	public GameState getGameState() {
@@ -159,6 +224,21 @@ public class MineField {
 			for (int neighbourX = Math.max(x - 1, 0); neighbourX < Math.min(x + 2, field[neighbourY].length); neighbourX++) {
 
 				if (isMined(neighbourX,neighbourY)) {
+					countResult++;
+				}
+			}
+		}
+		return countResult;
+	}
+
+	private int countNeighbouringFlags(int x, int y) {
+		int countResult = 0;
+
+		for (int neighbourY = Math.max(y - 1, 0); neighbourY < Math.min(y + 2, field.length); neighbourY++) {
+
+			for (int neighbourX = Math.max(x - 1, 0); neighbourX < Math.min(x + 2, field[neighbourY].length); neighbourX++) {
+
+				if (getCellSweepState(neighbourX,neighbourY) == SweepState.FLAGGED) {
 					countResult++;
 				}
 			}

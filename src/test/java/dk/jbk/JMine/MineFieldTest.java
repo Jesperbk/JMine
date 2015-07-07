@@ -131,6 +131,33 @@ public class MineFieldTest {
 	}
 
 	@Test
+	public void testGameWon() throws Exception {
+		int fieldWidth = 3, fieldHeight = 3;
+		int mineCount = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(
+						2,2,
+						1,2));
+
+		mineField.togglePressDown(0, 0);
+		mineField.expose(0, 0);
+
+		mineField.toggleFlagged(2, 2);
+		mineField.toggleFlagged(2, 1);
+
+		assertEquals(SweepState.FLAGGED, mineField.getCellSweepState(2, 2));
+		assertEquals(SweepState.FLAGGED, mineField.getCellSweepState(2, 1));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 0));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 1));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 2));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(1, 0));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(1, 1));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(1, 2));
+		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(2, 0));
+		assertEquals(GameState.WON, mineField.getGameState());
+	}
+
+	@Test
 	public void testGameOver() throws Exception {
 		int fieldWidth = 3, fieldHeight = 3;
 		int mineCount = 2;
@@ -213,6 +240,27 @@ public class MineFieldTest {
 		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(0, 1));
 		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(1, 0));
 		assertEquals(SweepState.EXPOSED, mineField.getCellSweepState(1, 1));
+	}
+
+	@Test
+	public void testRevealNeighboursWhenSafe() throws Exception {
+		int fieldWidth = 3, fieldHeight = 3;
+		int mineCount = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(
+						2,1,
+						1,2));
+
+		mineField.togglePressDown(0, 0);
+		mineField.expose(0, 0);
+
+		mineField.toggleFlagged(2, 1);
+		mineField.toggleFlagged(2, 2);
+
+		mineField.togglePressDownNeighbours(1, 1);
+		mineField.exposeNeighbours(1, 1);
+
+		assertEquals(SweepState.EXPLODED, mineField.getCellSweepState(1, 2));
 	}
 
 	private int countMinesInField(MineField mineField) {

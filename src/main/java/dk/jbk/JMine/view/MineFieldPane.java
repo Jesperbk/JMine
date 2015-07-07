@@ -27,23 +27,6 @@ public class MineFieldPane extends GridPane {
 
 		setupTileCanvases();
 
-		// TEST
-		mineField.togglePressDown(12, 7);
-		mineField.expose(12, 7);
-
-		mineField.toggleFlagged(10, 10);
-		/*
-		for (int x = 1; x < mineField.getWidth(); x++) {
-			for (int y = 1; y < mineField.getHeight(); y++) {
-				if (mineField.isMined(x, y)) {
-					mineField.togglePressDown(x, y);
-					mineField.expose(x, y);
-				}
-			}
-		}*/
-
-		// END TEST
-
 		draw();
 	}
 
