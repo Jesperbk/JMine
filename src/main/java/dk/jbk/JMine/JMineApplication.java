@@ -3,7 +3,7 @@ package dk.jbk.JMine;
 import dk.jbk.JMine.controller.ImageManager;
 import dk.jbk.JMine.controller.LibraryIntegerGenerator;
 import dk.jbk.JMine.controller.MineField;
-import dk.jbk.JMine.view.MineFieldCanvas;
+import dk.jbk.JMine.view.MineFieldPane;
 import javafx.application.Application;
 import javafx.scene.*;
 import javafx.scene.paint.Color;
@@ -25,7 +25,7 @@ public class JMineApplication extends Application {
 		stage.setScene(scene);
 		scene.setFill(Color.LIGHTGRAY);
 
-		MineFieldCanvas canvas = new MineFieldCanvas(mineField, imageManager);
+		MineFieldPane canvas = new MineFieldPane(mineField, imageManager);
 		root.getChildren().add(canvas);
 
 		stage.sizeToScene();
