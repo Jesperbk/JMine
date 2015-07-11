@@ -263,6 +263,27 @@ public class MineFieldTest {
 		assertEquals(SweepState.EXPLODED, mineField.getCellSweepState(1, 2));
 	}
 
+	@Test
+	public void testRevealNeighboursOnlyWhenExposed() throws Exception {
+		int fieldWidth = 3, fieldHeight = 6;
+		int mineCount = 2;
+		MineField mineField = new MineField(fieldWidth, fieldHeight, mineCount,
+				new MockIntegerGenerator(
+						2,1,
+						1,2));
+
+		mineField.togglePressDown(0, 0);
+		mineField.expose(0, 0);
+
+		mineField.toggleFlagged(0, 2);
+		mineField.toggleFlagged(2, 2);
+
+		mineField.togglePressDownNeighbours(2, 5);
+		mineField.exposeNeighbours(2, 5);
+
+		assertEquals(SweepState.BLANK, mineField.getCellSweepState(1, 5));
+	}
+
 	private int countMinesInField(MineField mineField) {
 		int numberOfMines = 0;
 

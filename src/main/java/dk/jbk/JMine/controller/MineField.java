@@ -3,15 +3,6 @@ package dk.jbk.JMine.controller;
 
 import dk.jbk.JMine.model.MineFieldCell;
 import dk.jbk.JMine.model.SweepState;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 public class MineField {
 	private MineFieldCell[][] field;
@@ -50,7 +41,7 @@ public class MineField {
 
 		field[y][x].expose();
 
-		exposeNeighboursIfBlank(x, y);
+		exposeNeighboursIfZero(x, y);
 
 		determineGameState();
 	}
@@ -95,10 +86,12 @@ public class MineField {
 		}
 	}
 
-	private void exposeNeighboursIfBlank(int x, int y) {
+	private void exposeNeighboursIfZero(int x, int y) {
 		MineFieldCell currentCell = field[y][x];
 
-		if (!currentCell.isMined() && getNeighbouringMinesCount(x, y) == 0) {
+		if (currentCell.getSweepState() == SweepState.EXPOSED
+				&& !currentCell.isMined()
+				&& getNeighbouringMinesCount(x, y) == 0) {
 
 			for (int neighbourY = Math.max(y - 1, 0); neighbourY < Math.min(y + 2, field.length); neighbourY++) {
 
@@ -144,7 +137,8 @@ public class MineField {
 		int neighbourMinesCount = getNeighbouringMinesCount(x, y);
 		int neighboursFlaggedCount = countNeighbouringFlags(x, y);
 
-		if (neighbourMinesCount == neighboursFlaggedCount) {
+		if (getCellSweepState(x, y) == SweepState.EXPOSED
+				&& neighbourMinesCount == neighboursFlaggedCount) {
 			for (int neighbourY = Math.max(y - 1, 0); neighbourY < Math.min(y + 2, field.length); neighbourY++) {
 
 				for (int neighbourX = Math.max(x - 1, 0); neighbourX < Math.min(x + 2, field[neighbourY].length); neighbourX++) {

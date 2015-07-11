@@ -6,30 +6,59 @@ import dk.jbk.JMine.controller.MineField;
 import dk.jbk.JMine.view.MineFieldPane;
 import javafx.application.Application;
 import javafx.scene.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class JMineApplication extends Application {
+	private static int GAME_WIDTH = 30;
+	private static int GAME_HEIGHT = 16;
+	private static int MINE_COUNT = 99;
+
+	private static JMineApplication instance;
+	private Stage stage;
+
 	private MineField mineField;
 	private ImageManager imageManager;
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		mineField = new MineField(30, 16, 99, new LibraryIntegerGenerator());
-		imageManager = new ImageManager();
+		instance = this;
+		this.stage = stage;
 
 		stage.setTitle("JMine");
 
-		Group root = new Group();
+		newGame();
+	}
+
+	public void newGame() {
+		if (stage.isShowing()) {
+			stage.hide();
+		}
+
+		mineField = new MineField(GAME_WIDTH, GAME_HEIGHT, MINE_COUNT, new LibraryIntegerGenerator());
+
+		StackPane root = new StackPane();
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 		scene.setFill(Color.LIGHTGRAY);
 
-		MineFieldPane canvas = new MineFieldPane(mineField, imageManager);
-		root.getChildren().add(canvas);
+		MineFieldPane mineFieldPane = new MineFieldPane(mineField);
+		root.getChildren().add(mineFieldPane);
+
+		mineFieldPane.minWidthProperty().bindBidirectional(root.minHeightProperty());
+		mineFieldPane.minHeightProperty().bindBidirectional(root.minHeightProperty());
 
 		stage.sizeToScene();
 		stage.show();
+	}
+
+	public void exit() {
+		stage.close();
+	}
+
+	public static JMineApplication getInstance() {
+		return instance;
 	}
 
 	public static void main(String[] args) {

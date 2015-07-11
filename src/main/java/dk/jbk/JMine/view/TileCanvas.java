@@ -1,16 +1,13 @@
 package dk.jbk.JMine.view;
 
-import dk.jbk.JMine.controller.ImageManager;
-import dk.jbk.JMine.controller.MineField;
+import dk.jbk.JMine.controller.*;
 import dk.jbk.JMine.model.SweepState;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.text.*;
 
 public class TileCanvas extends Canvas {
 	public static final int CELL_SIZE = 30;
@@ -25,6 +22,17 @@ public class TileCanvas extends Canvas {
 
 		setWidth(CELL_SIZE);
 		setHeight(CELL_SIZE);
+	}
+
+	public void setListener(InputHandler inputHandler) {
+		setOnMousePressed(inputHandler);
+		setOnMouseReleased(inputHandler);
+		setOnDragDetected(inputHandler);
+		setOnMouseDragEntered(inputHandler);
+		setOnMouseDragExited(inputHandler);
+		setOnMouseDragReleased(inputHandler);
+		setOnMouseExited(inputHandler);
+		setOnMouseEntered(inputHandler);
 	}
 
 	public void draw() {

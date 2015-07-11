@@ -3,19 +3,14 @@ package dk.jbk.JMine.controller;
 import dk.jbk.JMine.model.SweepState;
 import dk.jbk.JMine.view.MineFieldPane;
 import dk.jbk.JMine.view.TileCanvas;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
+import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -48,12 +43,18 @@ public class InputHandler implements EventHandler<MouseEvent> {
 			if (event.getButton() == MouseButton.PRIMARY) {
 				mineField.togglePressDown(cellX, cellY);
 			}
+			else if (event.getButton() == MouseButton.MIDDLE) {
+				mineField.togglePressDownNeighbours(cellX, cellY);
+			}
 		}
 
 		else if (event.getEventType() == MouseEvent.MOUSE_RELEASED
 				|| event.getEventType() == MouseDragEvent.MOUSE_DRAG_RELEASED) {
 			if (event.getButton() == MouseButton.PRIMARY) {
 				mineField.expose(cellX, cellY);
+			}
+			else if (event.getButton() == MouseButton.MIDDLE) {
+				mineField.exposeNeighbours(cellX, cellY);
 			}
 			else if (event.getButton() == MouseButton.SECONDARY) {
 				mineField.toggleFlagged(cellX, cellY);
@@ -68,12 +69,18 @@ public class InputHandler implements EventHandler<MouseEvent> {
 			if (event.isPrimaryButtonDown()) {
 				mineField.togglePressDown(cellX, cellY);
 			}
+			else if (event.isMiddleButtonDown()) {
+				mineField.togglePressDownNeighbours(cellX, cellY);
+			}
 		}
 
 		else if (event.getEventType() == MouseDragEvent.MOUSE_DRAG_EXITED) {
 			if (mineField.getCellSweepState(cellX, cellY)
 					== SweepState.PRESSED) {
 				mineField.togglePressDown(cellX, cellY);
+			}
+			else if (event.isMiddleButtonDown()) {
+				mineField.togglePressDownNeighbours(cellX, cellY);
 			}
 		}
 
