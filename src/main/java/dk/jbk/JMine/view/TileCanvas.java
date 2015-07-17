@@ -42,7 +42,7 @@ public class TileCanvas extends Canvas {
 		boolean cellIsMined = mineField.isMined(cellX, cellY);
 		Image cellTile = ImageManager.getRelevantTile(cellState, cellIsMined);
 
-		gc.drawImage(cellTile, 0, 0, CELL_SIZE, CELL_SIZE);
+		gc.drawImage(cellTile, 0, 0, getBoundsInLocal().getWidth(), getBoundsInLocal().getHeight());
 
 		if (cellState == SweepState.EXPOSED && !cellIsMined) {
 			int neighbourMineCount = mineField.getNeighbouringMinesCount(cellX, cellY);
@@ -69,9 +69,9 @@ public class TileCanvas extends Canvas {
 		gc.setTextAlign(TextAlignment.CENTER);
 		gc.setTextBaseline(VPos.CENTER);
 
-		gc.setFont(Font.font("Arial", FontWeight.BLACK, CELL_SIZE * 0.85));
+		gc.setFont(Font.font("Arial", FontWeight.BLACK, getHeight() * 0.85));
 
-		gc.fillText(Integer.toString(neighbourMineCount), CELL_SIZE / 2, CELL_SIZE / 2);
+		gc.fillText(Integer.toString(neighbourMineCount), getWidth() / 2, getHeight() / 2);
 	}
 
 	private void setStrokeForNeighbourMineCount(GraphicsContext gc, int neighbourMineCount) {

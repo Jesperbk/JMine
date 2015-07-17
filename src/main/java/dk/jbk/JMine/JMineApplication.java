@@ -1,25 +1,24 @@
 package dk.jbk.JMine;
 
-import dk.jbk.JMine.controller.ImageManager;
 import dk.jbk.JMine.controller.LibraryIntegerGenerator;
 import dk.jbk.JMine.controller.MineField;
 import dk.jbk.JMine.view.MineFieldPane;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class JMineApplication extends Application {
-	private static int GAME_WIDTH = 30;
-	private static int GAME_HEIGHT = 16;
-	private static int MINE_COUNT = 99;
+	private static final int GAME_WIDTH = 30;
+	private static final int GAME_HEIGHT = 16;
+	private static final int MINE_COUNT = 99;
 
 	private static JMineApplication instance;
 	private Stage stage;
 
 	private MineField mineField;
-	private ImageManager imageManager;
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -45,10 +44,9 @@ public class JMineApplication extends Application {
 
 		MineFieldPane mineFieldPane = new MineFieldPane(mineField);
 		root.getChildren().add(mineFieldPane);
+		root.setAlignment(Pos.CENTER);
 
-		mineFieldPane.minWidthProperty().bindBidirectional(root.minHeightProperty());
-		mineFieldPane.minHeightProperty().bindBidirectional(root.minHeightProperty());
-
+		stage.setResizable(false);
 		stage.sizeToScene();
 		stage.show();
 	}
